@@ -101,7 +101,7 @@ COPY . /tracee
 
 RUN make clean && \
     BTFHUB=$BTFHUB make tracee-ebpf && \
-    make tracee-rules && \
+    STATIC=1 make tracee-rules && \
     make rules && \
     rm -rf ./3rdparty/btfhub/ && \
     rm -rf ./3rdparty/btfhub-archive/

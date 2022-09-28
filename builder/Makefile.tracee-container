@@ -132,7 +132,8 @@ DOCKER_RUN_ARGS = run --rm --pid=host --privileged \
 		-v /etc/os-release:/etc/os-release-host:ro \
 		-v /sys/kernel/security:/sys/kernel/security:ro \
 		-e LIBBPFGO_OSRELEASE_FILE=/etc/os-release-host \
-		-v /tmp/tracee:/tmp/tracee:rw
+		-v /tmp/tracee:/tmp/tracee:rw \
+		-v /boot/config-5.15.0-41-generic:/boot/config-5.15.0-41-generic:ro
 
 DOCKER_RUN_ARGS_FULL = $(DOCKER_RUN_ARGS) \
 		-v /lib/modules:/lib/modules:ro \

@@ -62,9 +62,11 @@ run_tracee_rules() {
 
     # start tracee-ebpf
 
-    events=$($TRACEE_RULES_EXE --list-events)
+    # events=$($TRACEE_RULES_EXE --list-events)
+    events="close,execve,hooked_proc_fops,hooked_syscalls,init_module,magic_write,mem_prot_alert,process_vm_writev,ptrace,sched_process_exec,sched_process_exit,security_bprm_check,security_kernel_read_file,security_sb_mount,security_socket_connect"
+    echo $events
 
-    echo "INFO: starting tracee-ebpf..."
+    echo "INFO: starting tracee-ebpf... ..."
     ${TRACEE_EBPF_EXE} \
         --metrics \
         --output=format:gob \
@@ -81,7 +83,7 @@ run_tracee_rules() {
 
     # start tracee-rules
 
-    echo "INFO: starting tracee-rules..."
+    echo "INFO: starting tracee-rules... ..."
     $TRACEE_RULES_EXE\
         --metrics --input-tracee=file:${TRACEE_PIPE}\
         --input-tracee=format:gob\

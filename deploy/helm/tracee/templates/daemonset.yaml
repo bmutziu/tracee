@@ -30,6 +30,8 @@ spec:
         - name: tracee
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - --output-template=/tracee/templates/output.tmpl
           {{- if .Values.postee.enabled }}
           args:
             - --webhook=http://{{ include "tracee.fullname" . }}-postee:8082
@@ -41,11 +43,23 @@ spec:
               value: /etc/os-release-host
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
+          ports:
+          # must define the metrics port AND name it for prometheus podMonitor operator to find it
+          # https://aquasecurity.github.io/tracee/dev/integrations/#prometheus
+          - containerPort: 4466
+            name: metrics-rules
+            protocol: TCP
+          - containerPort: 3366
+            name: metrics-ebpf
+            protocol: TCP
           volumeMounts:
             - name: tmp-tracee
               mountPath: /tmp/tracee
             - name: etc-os-release
               mountPath: /etc/os-release-host
+              readOnly: true
+            - name: boot-config-generic
+              mountPath: /boot/config-5.15.0-41-generic
               readOnly: true
             {{- if .Values.signatures.config }}
             - name: tracee-config
@@ -74,6 +88,9 @@ spec:
         - name: etc-os-release
           hostPath:
             path: /etc/os-release
+        - name: boot-config-generic
+          hostPath:
+            path: /boot/config-5.15.0-41-generic
         {{- if .Values.signatures.config }}
         - name: tracee-config
           configMap:
